@@ -1,3 +1,4 @@
+using System;
 using Api.Data.Collections;
 using Api.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -27,10 +28,25 @@ namespace Api.Controllers
             return StatusCode(201, "Infectado adicionado com sucesso");
         }
 
-        [HttpGet]public ActionResult ObterInfectado()
+        [HttpGet]
+        public ActionResult ObterInfectado()
         {
             var infectados = _infectadosCollection.Find(Builders<Infectado>.Filter.Empty).ToList();
             return Ok(infectados);
-        }                
+        }
+
+        [HttpPut]
+        public ActionResult AtualizarInfectado([FromBody] infectadoDto dto)
+        {
+            _infectadosCollection.UpdateOne(Builders<Infectado>.Filter.Where(_ => _.DataNascimento == dto.DataNascimento), Builders<Infectado>.Update.Set("Sexo", dto.Sexo));
+            return Ok("Atualizado com Sucesso");
+        }
+
+        [HttpDelete("{DataNasc}")]
+        public ActionResult DeletarInfectado(DateTime dataNasc)
+        {
+            _infectadosCollection.DeleteOne(Builders<Infectado>.Filter.Where(_ => _.DataNascimento == dataNasc));
+            return Ok("Deletado Com Sucesso");
+        }
     }
 }
